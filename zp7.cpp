@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <stdint.h>
+#include <cstdint>
 
 #if defined(HAS_CLMUL) || defined(HAS_BZHI) || defined(HAS_POPCNT)
 #   include <immintrin.h>
@@ -87,6 +87,8 @@
 
 #define N_BITS      (6)
 
+constexpr int pow_2[6] = {1, 2, 4, 8, 16, 32, 64};
+
 typedef struct {
     uint64_t mask;
     uint64_t ppp_bit[N_BITS];
@@ -106,13 +108,7 @@ static inline uint64_t prefix_sum(uint64_t x) {
 // POPCNT polyfill. See this page for information about the algorithm:
 // https://www.chessprogramming.org/Population_Count#SWAR-Popcount
 uint64_t popcnt_64(uint64_t x) {
-    const uint64_t m_1 = 0x5555555555555555LLU;
-    const uint64_t m_2 = 0x3333333333333333LLU;
-    const uint64_t m_4 = 0x0f0f0f0f0f0f0f0fLLU;
-    x = x - ((x >> 1) & m_1);
-    x = (x & m_2) + ((x >> 2) & m_2);
-    x = (x + (x >> 4)) & m_4;
-    return (x * 0x0101010101010101LLU) >> 56;
+    return __builtin_popcountll(x);
 }
 #endif
 
@@ -177,10 +173,9 @@ uint64_t zp7_pext_pre_64(uint64_t a, const zp7_masks_64_t *masks) {
     // For each bit in the PPP, shift right only those bits that are set in
     // that bit's mask
     for (int i = 0; i < N_BITS; i++) {
-        uint64_t shift = 1 << i;
         uint64_t bit = masks->ppp_bit[i];
         // Shift only the input bits that are set in
-        a = (a & ~bit) | ((a & bit) >> shift);
+        a = (a & ~bit) | ((a & bit) >> pow_2[i]);
     }
     return a;
 }
