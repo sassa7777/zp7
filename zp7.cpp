@@ -87,7 +87,7 @@
 
 #define N_BITS      (6)
 
-constexpr int pow_2[6] = {1, 2, 4, 8, 16, 32, 64};
+constexpr int pow_2[6] = {1, 2, 4, 8, 16, 32};
 
 typedef struct {
     uint64_t mask;
