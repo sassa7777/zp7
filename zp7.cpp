@@ -114,7 +114,7 @@ constexpr uint64_t popcnt_64(uint64_t x) {
 // It can also be called separately and cached, if the mask values will be used
 // more than once (these can be shared across PEXT and PDEP calls if they use
 // the same masks). 
-constexpr inline zp7_masks_64_t zp7_ppp_64(uint64_t mask) noexcept {
+inline constexpr zp7_masks_64_t zp7_ppp_64(uint64_t mask) noexcept {
     zp7_masks_64_t r;
     r.mask = mask;
 
